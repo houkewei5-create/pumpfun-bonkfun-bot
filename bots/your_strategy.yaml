@@ -1,0 +1,110 @@
+"""
+Bots configuration file for your strategy
+
+Edit this file to customize your trading parameters.
+All values correspond to strategy config in config.py
+"""
+
+version: 1
+
+# ===== Basic Strategy Info =====
+strategy:
+  name: "Your Auto Trading Strategy"
+  description: "Automated MEME token trading with multi-factor entry scoring and sophisticated exit management"
+  version: "1.0.0"
+  author: "Your Name"
+
+# ===== Capital Parameters =====
+capital:
+  initial_usd: 1000.0
+  position_size_normal_pct: 5  # 5% per token (normal)
+  position_size_strong_pct: 8  # 8% per token (strong golddog)
+  single_token_cap_pct: 10  # 10% max per token
+  max_positions: 6  # Max concurrent holdings
+
+# ===== Slippage & Fees =====
+trading:
+  slippage_buy_pct: 0.5  # Buy slippage
+  slippage_sell_pct: 2.0  # Sell slippage
+  gas_fee_sol: 0.001
+
+# ===== Phase 1: Basic Filters (10 rules) =====
+filters_phase1:
+  age_min_minutes: 1
+  age_max_minutes: 1440
+  holder_count_min: 30
+  liquidity_min_usd: 5000
+  top10_ratio_max: 0.60  # 60%
+  rat_max: 0.30  # 30%
+  bundler_max: 0.30  # 30%
+  unique_traders_min: 1
+  buy_sell_ratio_min: 0.70
+  holder_ut_ratio_max: 80
+  market_cap_min_usd: 30000
+  market_cap_max_usd: 10000000
+
+# ===== Security Checks =====
+security:
+  # Zero-tolerance
+  lp_burn_ratio_min: 0.99  # 99% must be burned or locked
+  dev_holding_max: 0.05  # Dev must hold <= 5%
+  mint_must_be_revoked: true
+  
+  # Phase 2 verification
+  safety_score_min: 0.5
+  rat_safety_max: 0.3
+  bundler_safety_max: 0.4
+
+# ===== Entry Scoring (F1-F6) =====
+entry_scoring:
+  total_score_threshold: 32
+  strong_golddog_threshold: 38
+  strong_golddog_growth_min: 0.4
+
+# ===== Time-based Stop Loss =====
+exit_stops:
+  protect_period_sec: 120
+  
+  # Rate-based
+  stop_rate_10s_pct: -12  # 10 sec drop >= 12%
+  stop_rate_30s_pct: -20  # 30 sec drop >= 20%
+  stop_rate_1m_pct: -30   # 1 min drop >= 30%
+  
+  # Absolute
+  stop_abs_fallback_pct: -25  # Anytime: -25%
+  stop_abs_floor_pct: -3      # After protect: -3%
+  
+  # Soft stops
+  stop_soft_5m_pct: -10  # >5min & -10%
+  stop_soft_15m_pct: -6  # >15min & -6%
+
+# ===== Take Profit (Ladder) =====
+exit_tp:
+  tp_20_mcap_mult: 1.20
+  tp_20_sell_pct: 20  # Sell 20%
+  
+  tp_30_mcap_mult: 1.30
+  tp_30_sell_pct: 30  # Sell 30%
+  
+  tp_80_mcap_mult: 1.80
+  tp_80_sell_pct: 30  # Sell 30%
+  
+  tp_200_mcap_mult: 2.00
+  tp_200_sell_pct: 20  # Sell 20%
+
+# ===== Other Rules =====
+other:
+  graveyard_cooldown_sec: 600  # 10 min before retry
+  factor_audit_frequency: 100  # Every 100 trades
+
+# ===== Logging & Monitoring =====
+logging:
+  level: INFO  # DEBUG, INFO, WARNING, ERROR
+  log_to_file: true
+  log_dir: ./logs
+  json_logs: true
+
+# ===== Paper Trading (Simulation) =====
+paper_trading:
+  enabled: true  # Set to false for live trading
+  starting_capital: 1000.0
