@@ -1,0 +1,102 @@
+# Configuration example for your trading strategy
+# Copy to: bots/your_strategy.yaml
+# Then customize the parameters
+
+version: 1
+
+strategy:
+  name: "Your Auto Trading Strategy"
+  description: "Automated MEME token trading with multi-factor entry and sophisticated exit management"
+  version: "1.0.0"
+
+# ===== Capital Configuration =====
+capital:
+  initial_usd: 1000.0           # 初始资金
+  position_size_normal_pct: 5   # 普通仓位 5%
+  position_size_strong_pct: 8   # 强金狗仓位 8%
+  single_token_cap_pct: 10      # 单币上限 10%
+  max_positions: 6              # 最大持仓数
+
+# ===== Trading Parameters =====
+trading:
+  slippage_buy_pct: 0.5         # 买入滑点 0.5%
+  slippage_sell_pct: 2.0        # 卖出滑点 2%
+  gas_fee_sol: 0.001            # Gas 费用
+
+# ===== Phase 1: Basic Filters (10 Rules) =====
+filters_phase1:
+  age_min_minutes: 1            # 最小年龄 1 分钟
+  age_max_minutes: 1440         # 最大年龄 1440 分钟（1 天）
+  holder_count_min: 30          # 最小持币者 30
+  liquidity_min_usd: 5000       # 最小流动性 $5,000
+  top10_ratio_max: 0.60         # Top10 占比 ≤ 60%
+  rat_max: 0.30                 # 老鼠仓 ≤ 30%
+  bundler_max: 0.30             # 捆绑者 ≤ 30%
+  unique_traders_min: 1         # 唯一交易者 ≥ 1
+  buy_sell_ratio_min: 0.70      # 买卖比 > 0.70
+  holder_ut_ratio_max: 80       # holder/UT ≤ 80
+  market_cap_min_usd: 30000     # 市值下限 $30,000
+  market_cap_max_usd: 10000000  # 市值上限 $10,000,000
+
+# ===== Security Checks =====
+security:
+  lp_burn_ratio_min: 0.99       # LP 销毁 ≥ 99%
+  dev_holding_max: 0.05         # 团队持仓 ≤ 5%（销毁 ≥ 80%）
+  mint_must_be_revoked: true    # 铸币权必须撤销
+  safety_score_min: 0.5         # 安全评分 ≥ 0.5
+  rat_safety_max: 0.3           # 操纵检测：Rat
+  bundler_safety_max: 0.4       # 操纵检测：Bundler
+
+# ===== Entry Scoring (F1-F6) =====
+entry_scoring:
+  total_score_threshold: 32     # 入场分数阈值
+  strong_golddog_threshold: 38  # 强金狗阈值
+  strong_golddog_growth_min: 0.4 # 强金狗最小增长
+
+# ===== Exit: Stop Loss Rules =====
+exit_stops:
+  protect_period_sec: 120       # 保护期 120 秒
+  
+  # Rate-based stops
+  stop_rate_10s_pct: -12        # 10 秒跌幅 ≥ 12%
+  stop_rate_30s_pct: -20        # 30 秒跌幅 ≥ 20%
+  stop_rate_1m_pct: -30         # 1 分钟跌幅 ≥ 30%
+  
+  # Absolute stops
+  stop_abs_fallback_pct: -25    # 绝对止损 -25%（任意时间）
+  stop_abs_floor_pct: -3        # 绝对止损 -3%（保护期后）
+  
+  # Soft stops (time-based)
+  stop_soft_5m_pct: -10         # 5 分钟后 -10%
+  stop_soft_15m_pct: -6         # 15 分钟后 -6%
+
+# ===== Exit: Take Profit Ladder =====
+exit_tp:
+  tp_20_mcap_mult: 1.20         # 1.20x 市值 → 卖 20%
+  tp_20_sell_pct: 20
+  
+  tp_30_mcap_mult: 1.30         # 1.30x 市值 → 卖 30%
+  tp_30_sell_pct: 30
+  
+  tp_80_mcap_mult: 1.80         # 1.80x 市值 → 卖 30%
+  tp_80_sell_pct: 30
+  
+  tp_200_mcap_mult: 2.00        # 2.00x 市值 → 卖 20%
+  tp_200_sell_pct: 20
+
+# ===== Other Rules =====
+other:
+  graveyard_cooldown_sec: 600   # Graveyard 冷却 10 分钟
+  factor_audit_frequency: 100   # 每 100 笔交易审计因子
+
+# ===== Logging =====
+logging:
+  level: INFO                   # DEBUG, INFO, WARNING, ERROR
+  log_to_file: true
+  log_dir: ./logs
+  json_logs: true
+
+# ===== Paper Trading =====
+paper_trading:
+  enabled: true                 # true = 模拟，false = 实盘
+  starting_capital: 1000.0
